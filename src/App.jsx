@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 const staticPosts = [
@@ -21,6 +21,9 @@ function App() {
   const [posts, setPosts] = useState(staticPosts);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
+  const [editedPostId, setEditedPostId] = useState(null);
+  const [editedTitle, setEditedTitle] = useState("");
+  const [editedBody, setEditedBody] = useState("");
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -41,9 +44,40 @@ function App() {
     setPosts([...posts, newPost]);
   };
 
+  const handleEditButtonClick = (id) => () => {
+    const post = posts.find((post) => post.id === id);
+    setEditedTitle(post.title);
+    setEditedBody(post.body);
+    setEditedPostId(id);
+  };
+
   const handleDeletePost = (id) => () => {
     const newPosts = posts.filter((post) => post.id !== id);
     setPosts(newPosts);
+  };
+
+  const handleEditedTitleChange = (e) => {
+    setEditedTitle(e.target.value);
+  };
+
+  const handleEditedBodyChange = (e) => {
+    setEditedBody(e.target.value);
+  };
+
+  const handleEdit = (id) => (e) => {
+    e.preventDefault();
+    const newPosts = posts.map((post) => {
+      if (post.id === id) {
+        return {
+          ...post,
+          title: editedTitle,
+          body: editedBody,
+        };
+      }
+      return post;
+    });
+    setPosts(newPosts);
+    setEditedPostId(null);
   };
 
   return (
@@ -67,13 +101,36 @@ function App() {
       </form>
       {posts.map((post) => {
         return (
-          <div className="post" key={post.id}>
-            <h2>{post.title}</h2>
-            <button>Edit Title</button>
-            <p>{post.body}</p>
-            <button>Edit Body</button>
-            <button onClick={handleDeletePost(post.id)}>Delete</button>
-          </div>
+          <React.Fragment key={post.id}>
+            {editedPostId === post.id ? (
+              <div className="edit-post">
+                <form onSubmit={handleEdit(post.id)}>
+                  <input
+                    type="text"
+                    placeholder="Title"
+                    value={editedTitle}
+                    onChange={handleEditedTitleChange}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Body"
+                    value={editedBody}
+                    onChange={handleEditedBodyChange}
+                  />
+                  <button type="submit">Update</button>
+                </form>
+              </div>
+            ) : (
+              <div className="post">
+                <h2>{post.title}</h2>
+                <p>{post.body}</p>
+                <button type="button" onClick={handleEditButtonClick(post.id)}>
+                  Edit
+                </button>
+                <button onClick={handleDeletePost(post.id)}>Delete</button>
+              </div>
+            )}
+          </React.Fragment>
         );
       })}
     </div>

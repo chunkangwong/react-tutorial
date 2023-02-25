@@ -41,6 +41,11 @@ function App() {
     setPosts([...posts, newPost]);
   };
 
+  const handleDeletePost = (id) => () => {
+    const newPosts = posts.filter((post) => post.id !== id);
+    setPosts(newPosts);
+  };
+
   return (
     <div className="App">
       <form onSubmit={handleSubmit}>
@@ -64,7 +69,10 @@ function App() {
         return (
           <div className="post" key={post.id}>
             <h2>{post.title}</h2>
+            <button>Edit Title</button>
             <p>{post.body}</p>
+            <button>Edit Body</button>
+            <button onClick={handleDeletePost(post.id)}>Delete</button>
           </div>
         );
       })}

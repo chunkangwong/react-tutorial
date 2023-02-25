@@ -18,13 +18,19 @@ function App() {
     });
   }, []);
 
-  const handleAddPost = ({ title, body }) => {
-    const newPost = {
-      userId: 1,
-      id: posts.length + 1,
-      title,
-      body,
-    };
+  const handleAddPost = async ({ title, body }) => {
+    const response = await fetch(POSTS_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        body,
+        user_id: 1,
+      }),
+    });
+    const newPost = await response.json();
     setPosts([...posts, newPost]);
   };
 

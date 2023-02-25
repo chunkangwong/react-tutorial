@@ -11,33 +11,46 @@ function App() {
     postsReducer,
     initialState
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    fetch(POSTS_API_URL).then((response) => {
-      response.json().then((data) => {
+    setIsLoading(true);
+    fetch(POSTS_API_URL)
+      .then(async (response) => {
+        const data = await response.json();
         dispatch({
           type: "SET_POSTS",
           payload: data,
         });
+      })
+      .catch((error) => {
+        console.log(error);
+        window.alert("Something went wrong!");
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
-    });
   }, []);
 
   return (
     <div className="App">
       <PostsContext.Provider value={{ dispatch }}>
         <AddPostForm />
-        {posts.map((post) => {
-          return (
-            <React.Fragment key={post.id}>
-              {editedPostId === post.id ? (
-                <EditPostForm post={post} />
-              ) : (
-                <Post post={post} />
-              )}
-            </React.Fragment>
-          );
-        })}
+        {isLoading ? (
+          <div>Loading...</div>
+        ) : (
+          posts.map((post) => {
+            return (
+              <React.Fragment key={post.id}>
+                {editedPostId === post.id ? (
+                  <EditPostForm post={post} />
+                ) : (
+                  <Post post={post} />
+                )}
+              </React.Fragment>
+            );
+          })
+        )}
       </PostsContext.Provider>
     </div>
   );

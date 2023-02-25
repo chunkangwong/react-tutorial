@@ -5,6 +5,7 @@ const EditPostForm = ({ post: { id, title, body } }) => {
   const { dispatch } = useContext(PostsContext);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEditedTitleChange = (e) => {
     setEditedTitle(e.target.value);
@@ -16,23 +17,31 @@ const EditPostForm = ({ post: { id, title, body } }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(POSTS_API_URL + `/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: editedTitle,
-        body: editedBody,
-      }),
-    });
-    const editedPost = await response.json();
-    dispatch({
-      type: "EDIT_POST",
-      payload: editedPost,
-    });
-    setEditedTitle("");
-    setEditedBody("");
+    setIsLoading(true);
+    try {
+      const response = await fetch(POSTS_API_URL + `/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: editedTitle,
+          body: editedBody,
+        }),
+      });
+      const editedPost = await response.json();
+      dispatch({
+        type: "EDIT_POST",
+        payload: editedPost,
+      });
+    } catch (error) {
+      console.log(error);
+      window.alert("Something went wrong!");
+    } finally {
+      setIsLoading(false);
+      setEditedTitle("");
+      setEditedBody("");
+    }
   };
 
   return (
@@ -49,7 +58,9 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         value={editedBody}
         onChange={handleEditedBodyChange}
       />
-      <button type="submit">Update</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Updating post..." : "Update"}
+      </button>
     </form>
   );
 };

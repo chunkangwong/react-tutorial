@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import AddPostForm from "./components/AddPostForm";
+import Post from "./components/Post";
 
 const staticPosts = [
   {
@@ -96,14 +97,11 @@ function App() {
                 </form>
               </div>
             ) : (
-              <div className="post">
-                <h2>{post.title}</h2>
-                <p>{post.body}</p>
-                <button type="button" onClick={handleEditButtonClick(post.id)}>
-                  Edit
-                </button>
-                <button onClick={handleDeletePost(post.id)}>Delete</button>
-              </div>
+              <Post
+                post={post}
+                onEditButtonClick={handleEditButtonClick}
+                onDeletPost={handleDeletePost}
+              />
             )}
           </React.Fragment>
         );

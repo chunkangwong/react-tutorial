@@ -38,7 +38,10 @@ function App() {
     setEditedPostId(id);
   };
 
-  const handleDeletePost = (id) => () => {
+  const handleDeletePost = (id) => async () => {
+    await fetch(POSTS_API_URL + `/${id}`, {
+      method: "DELETE",
+    });
     const newPosts = posts.filter((post) => post.id !== id);
     setPosts(newPosts);
   };

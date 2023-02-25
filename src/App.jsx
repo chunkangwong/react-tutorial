@@ -29,40 +29,17 @@ function App() {
     setPosts(newPosts);
   };
 
-  const handleEditPost = async ({ id, title, body }) => {
-    await fetch(POSTS_API_URL + `/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        body,
-      }),
-    });
-    const newPosts = posts.map((post) => {
-      if (post.id === id) {
-        return {
-          ...post,
-          title: title,
-          body: body,
-        };
-      }
-      return post;
-    });
-    setPosts(newPosts);
-    setEditedPostId(null);
-  };
-
   return (
     <div className="App">
-      <PostsContext.Provider value={{ posts, setPosts }}>
+      <PostsContext.Provider
+        value={{ posts, setPosts, editedPostId, setEditedPostId }}
+      >
         <AddPostForm />
         {posts.map((post) => {
           return (
             <React.Fragment key={post.id}>
               {editedPostId === post.id ? (
-                <EditPostForm post={post} onEditPost={handleEditPost} />
+                <EditPostForm post={post} />
               ) : (
                 <Post
                   post={post}

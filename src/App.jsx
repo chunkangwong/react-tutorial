@@ -25,7 +25,7 @@ function App() {
 
   return (
     <div className="App">
-      <PostsContext.Provider value={{ posts, dispatch }}>
+      <PostsContext.Provider value={{ dispatch }}>
         <AddPostForm />
         {posts.map((post) => {
           return (

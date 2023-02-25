@@ -2,18 +2,17 @@ import { useContext } from "react";
 import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 
 const Post = ({ post: { id, title, body } }) => {
-  const { setEditedPostId, posts, setPosts } = useContext(PostsContext);
+  const { dispatch } = useContext(PostsContext);
 
   const handleEditButtonClick = (id) => () => {
-    setEditedPostId(id);
+    dispatch({ type: "SET_EDITED_POST_ID", payload: id });
   };
 
   const handleDeletePost = (id) => async () => {
     await fetch(POSTS_API_URL + `/${id}`, {
       method: "DELETE",
     });
-    const newPosts = posts.filter((post) => post.id !== id);
-    setPosts(newPosts);
+    dispatch({ type: "DELETE_POST", payload: id });
   };
 
   return (

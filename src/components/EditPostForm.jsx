@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 
 const EditPostForm = ({ post: { id, title, body } }) => {
-  const { posts, setPosts, setEditedPostId } = useContext(PostsContext);
+  const { dispatch } = useContext(PostsContext);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
 
@@ -16,7 +16,7 @@ const EditPostForm = ({ post: { id, title, body } }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetch(POSTS_API_URL + `/${id}`, {
+    const response = await fetch(POSTS_API_URL + `/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -26,18 +26,11 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         body: editedBody,
       }),
     });
-    const newPosts = posts.map((post) => {
-      if (post.id === id) {
-        return {
-          ...post,
-          title: editedTitle,
-          body: editedBody,
-        };
-      }
-      return post;
+    const editedPost = await response.json();
+    dispatch({
+      type: "EDIT_POST",
+      payload: editedPost,
     });
-    setPosts(newPosts);
-    setEditedPostId(null);
     setEditedTitle("");
     setEditedBody("");
   };

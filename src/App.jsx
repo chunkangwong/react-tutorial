@@ -1,6 +1,7 @@
+import { useState } from "react";
 import "./App.css";
 
-const posts = [
+const staticPosts = [
   {
     userId: 1,
     id: 1,
@@ -17,8 +18,48 @@ const posts = [
 ];
 
 function App() {
+  const [posts, setPosts] = useState(staticPosts);
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleBodyChange = (e) => {
+    setBody(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newPost = {
+      userId: 1,
+      id: posts.length + 1,
+      title,
+      body,
+    };
+    setPosts([...posts, newPost]);
+  };
+
   return (
     <div className="App">
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Title"
+          value={title}
+          onChange={handleTitleChange}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Body"
+          value={body}
+          onChange={handleBodyChange}
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
       {posts.map((post) => {
         return (
           <div className="post" key={post.id}>

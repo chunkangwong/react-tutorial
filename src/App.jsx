@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import AddPostForm from "./components/AddPostForm";
+import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
 
 const staticPosts = [
@@ -21,10 +22,7 @@ const staticPosts = [
 
 function App() {
   const [posts, setPosts] = useState(staticPosts);
-
   const [editedPostId, setEditedPostId] = useState(null);
-  const [editedTitle, setEditedTitle] = useState("");
-  const [editedBody, setEditedBody] = useState("");
 
   const handleAddPost = ({ title, body }) => {
     const newPost = {
@@ -37,9 +35,6 @@ function App() {
   };
 
   const handleEditButtonClick = (id) => () => {
-    const post = posts.find((post) => post.id === id);
-    setEditedTitle(post.title);
-    setEditedBody(post.body);
     setEditedPostId(id);
   };
 
@@ -48,22 +43,13 @@ function App() {
     setPosts(newPosts);
   };
 
-  const handleEditedTitleChange = (e) => {
-    setEditedTitle(e.target.value);
-  };
-
-  const handleEditedBodyChange = (e) => {
-    setEditedBody(e.target.value);
-  };
-
-  const handleEdit = (id) => (e) => {
-    e.preventDefault();
+  const handleEdit = ({ id, title, body }) => {
     const newPosts = posts.map((post) => {
       if (post.id === id) {
         return {
           ...post,
-          title: editedTitle,
-          body: editedBody,
+          title: title,
+          body: body,
         };
       }
       return post;
@@ -79,23 +65,7 @@ function App() {
         return (
           <React.Fragment key={post.id}>
             {editedPostId === post.id ? (
-              <div className="edit-post">
-                <form onSubmit={handleEdit(post.id)}>
-                  <input
-                    type="text"
-                    placeholder="Title"
-                    value={editedTitle}
-                    onChange={handleEditedTitleChange}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Body"
-                    value={editedBody}
-                    onChange={handleEditedBodyChange}
-                  />
-                  <button type="submit">Update</button>
-                </form>
-              </div>
+              <EditPostForm post={post} onEditPost={handleEdit} />
             ) : (
               <Post
                 post={post}

@@ -1,8 +1,8 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 
 const AddPostForm = () => {
-  const { posts, setPosts } = useContext(PostsContext);
+  const { dispatch } = useContext(PostsContext);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
@@ -28,7 +28,7 @@ const AddPostForm = () => {
       }),
     });
     const newPost = await response.json();
-    setPosts([...posts, newPost]);
+    dispatch({ type: "ADD_POST", payload: newPost });
     setTitle("");
     setBody("");
   };

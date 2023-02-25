@@ -15,6 +15,12 @@ const postsReducer = (state, action) => {
         ...state,
         editedPostId: action.payload,
       };
+    case "ADD_POST":
+      const newPost = action.payload;
+      return {
+        ...state,
+        posts: [...state.posts, newPost],
+      };
     case "EDIT_POST":
       const editedPost = action.payload;
       return {

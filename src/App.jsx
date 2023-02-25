@@ -12,7 +12,7 @@ function App() {
     postsReducer,
     initialState
   );
-  const { isLoading } = useQuery(
+  const { isFetching } = useQuery(
     ["posts"],
     async () => {
       const response = await fetch(POSTS_API_URL);
@@ -35,7 +35,7 @@ function App() {
     <div className="App">
       <PostsContext.Provider value={{ dispatch }}>
         <AddPostForm />
-        {isLoading ? (
+        {isFetching ? (
           <div>Loading...</div>
         ) : (
           posts.map((post) => {

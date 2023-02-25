@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import AddPostForm from "./components/AddPostForm";
 
 const staticPosts = [
   {
@@ -19,22 +20,12 @@ const staticPosts = [
 
 function App() {
   const [posts, setPosts] = useState(staticPosts);
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
+
   const [editedPostId, setEditedPostId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const [editedBody, setEditedBody] = useState("");
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleBodyChange = (e) => {
-    setBody(e.target.value);
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleAddPost = ({ title, body }) => {
     const newPost = {
       userId: 1,
       id: posts.length + 1,
@@ -82,23 +73,7 @@ function App() {
 
   return (
     <div className="App">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={handleTitleChange}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Body"
-          value={body}
-          onChange={handleBodyChange}
-          required
-        />
-        <button type="submit">Submit</button>
-      </form>
+      <AddPostForm onAddPost={handleAddPost} />
       {posts.map((post) => {
         return (
           <React.Fragment key={post.id}>

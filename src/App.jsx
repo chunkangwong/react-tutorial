@@ -17,18 +17,6 @@ function App() {
     });
   }, []);
 
-  const handleEditButtonClick = (id) => () => {
-    setEditedPostId(id);
-  };
-
-  const handleDeletePost = (id) => async () => {
-    await fetch(POSTS_API_URL + `/${id}`, {
-      method: "DELETE",
-    });
-    const newPosts = posts.filter((post) => post.id !== id);
-    setPosts(newPosts);
-  };
-
   return (
     <div className="App">
       <PostsContext.Provider
@@ -41,11 +29,7 @@ function App() {
               {editedPostId === post.id ? (
                 <EditPostForm post={post} />
               ) : (
-                <Post
-                  post={post}
-                  onEditButtonClick={handleEditButtonClick}
-                  onDeletPost={handleDeletePost}
-                />
+                <Post post={post} />
               )}
             </React.Fragment>
           );

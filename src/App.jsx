@@ -3,8 +3,7 @@ import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
-
-const POSTS_API_URL = import.meta.env.VITE_POSTS_API_URL;
+import PostsContext, { POSTS_API_URL } from "./contexts/posts.context";
 
 function App() {
   const [posts, setPosts] = useState([]);
@@ -17,22 +16,6 @@ function App() {
       });
     });
   }, []);
-
-  const handleAddPost = async ({ title, body }) => {
-    const response = await fetch(POSTS_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        body,
-        user_id: 1,
-      }),
-    });
-    const newPost = await response.json();
-    setPosts([...posts, newPost]);
-  };
 
   const handleEditButtonClick = (id) => () => {
     setEditedPostId(id);
@@ -73,22 +56,24 @@ function App() {
 
   return (
     <div className="App">
-      <AddPostForm onAddPost={handleAddPost} />
-      {posts.map((post) => {
-        return (
-          <React.Fragment key={post.id}>
-            {editedPostId === post.id ? (
-              <EditPostForm post={post} onEditPost={handleEditPost} />
-            ) : (
-              <Post
-                post={post}
-                onEditButtonClick={handleEditButtonClick}
-                onDeletPost={handleDeletePost}
-              />
-            )}
-          </React.Fragment>
-        );
-      })}
+      <PostsContext.Provider value={{ posts, setPosts }}>
+        <AddPostForm />
+        {posts.map((post) => {
+          return (
+            <React.Fragment key={post.id}>
+              {editedPostId === post.id ? (
+                <EditPostForm post={post} onEditPost={handleEditPost} />
+              ) : (
+                <Post
+                  post={post}
+                  onEditButtonClick={handleEditButtonClick}
+                  onDeletPost={handleDeletePost}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </PostsContext.Provider>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import React, { useEffect, useReducer, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useReducer } from "react";
 import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
@@ -11,26 +12,24 @@ function App() {
     postsReducer,
     initialState
   );
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    fetch(POSTS_API_URL)
-      .then(async (response) => {
-        const data = await response.json();
-        dispatch({
-          type: "SET_POSTS",
-          payload: data,
-        });
-      })
-      .catch((error) => {
+  const { isLoading } = useQuery(
+    ["posts"],
+    async () => {
+      const response = await fetch(POSTS_API_URL);
+      const posts = await response.json();
+      dispatch({
+        type: "SET_POSTS",
+        payload: posts,
+      });
+      return posts;
+    },
+    {
+      onError: (error) => {
         console.log(error);
         window.alert("Something went wrong!");
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+      },
+    }
+  );
 
   return (
     <div className="App">

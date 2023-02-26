@@ -1,8 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import usePostsStore from "../store/posts.store";
+import usePostsStore, { IPost } from "../store/posts.store";
 
-const EditPostForm = ({ post: { id, title, body } }) => {
+interface EditPostFormProps {
+  post: IPost;
+}
+
+const EditPostForm = ({ post: { id, title, body } }: EditPostFormProps) => {
   const setEditedPostId = usePostsStore((state) => state.setEditedPostId);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
@@ -34,15 +38,19 @@ const EditPostForm = ({ post: { id, title, body } }) => {
     },
   });
 
-  const handleEditedTitleChange = (e) => {
+  const handleEditedTitleChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setEditedTitle(e.target.value);
   };
 
-  const handleEditedBodyChange = (e) => {
+  const handleEditedBodyChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setEditedBody(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     editPost();
   };

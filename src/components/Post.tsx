@@ -1,7 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import usePostsStore from "../store/posts.store";
+import usePostsStore, { IPost } from "../store/posts.store";
 
-const Post = ({ post: { id, title, body } }) => {
+interface PostProps {
+  post: IPost;
+}
+
+const Post = ({ post: { id, title, body } }: PostProps) => {
   const setEditedPostId = usePostsStore((state) => state.setEditedPostId);
   const queryClient = useQueryClient();
   const { mutate: deletePost, isLoading } = useMutation({

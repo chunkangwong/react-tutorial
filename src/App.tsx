@@ -4,7 +4,7 @@ import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
-import usePostsStore from "./store/posts.store";
+import usePostsStore, { IPost } from "./store/posts.store";
 
 function App() {
   const editedPostId = usePostsStore((state) => state.editedPostId);
@@ -13,7 +13,7 @@ function App() {
     async () => {
       const response = await fetch(import.meta.env.VITE_POSTS_API_URL);
       const posts = await response.json();
-      return posts;
+      return posts as IPost[];
     },
     {
       onError: (error) => {
@@ -26,7 +26,7 @@ function App() {
   return (
     <div className="App">
       <AddPostForm />
-      {isFetching ? (
+      {isFetching || !posts ? (
         <div>Loading...</div>
       ) : (
         posts.map((post) => {

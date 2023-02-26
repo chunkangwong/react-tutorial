@@ -32,15 +32,15 @@ const AddPostForm = () => {
     },
   });
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setTitle(e.target.value);
   };
 
-  const handleBodyChange = (e) => {
+  const handleBodyChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setBody(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     addPost();
   };

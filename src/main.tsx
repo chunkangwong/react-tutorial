@@ -6,7 +6,7 @@ import "./index.css";
 
 const client = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={client}>
     <React.StrictMode>
       <App />

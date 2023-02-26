@@ -4,7 +4,6 @@ import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
-import { POSTS_API_URL } from "./contexts/posts.context";
 import { setPosts } from "./features/posts/posts.slice";
 
 function App() {
@@ -14,7 +13,7 @@ function App() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(POSTS_API_URL)
+    fetch(import.meta.env.VITE_POSTS_API_URL)
       .then(async (response) => {
         const data = await response.json();
         dispatch(setPosts(data));

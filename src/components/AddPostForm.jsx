@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { POSTS_API_URL } from "../contexts/posts.context";
 import { addPost } from "../features/posts/posts.slice";
 
 const AddPostForm = () => {
@@ -21,7 +20,7 @@ const AddPostForm = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(POSTS_API_URL, {
+      const response = await fetch(import.meta.env.VITE_POSTS_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

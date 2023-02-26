@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { POSTS_API_URL } from "../contexts/posts.context";
 import { deletePost, setEditedPostId } from "../features/posts/posts.slice";
 
 const Post = ({ post: { id, title, body } }) => {
@@ -14,7 +13,7 @@ const Post = ({ post: { id, title, body } }) => {
   const handleDeletePost = (id) => async () => {
     setIsLoading(true);
     try {
-      await fetch(POSTS_API_URL + `/${id}`, {
+      await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
         method: "DELETE",
       });
       dispatch(deletePost(id));

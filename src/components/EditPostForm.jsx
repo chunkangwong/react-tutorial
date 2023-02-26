@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
-import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 import { editPost } from "../features/posts/posts.slice";
 
 const EditPostForm = ({ post: { id, title, body } }) => {
@@ -21,16 +20,19 @@ const EditPostForm = ({ post: { id, title, body } }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(POSTS_API_URL + `/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: editedTitle,
-          body: editedBody,
-        }),
-      });
+      const response = await fetch(
+        import.meta.env.VITE_POSTS_API_URL + `/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title: editedTitle,
+            body: editedBody,
+          }),
+        }
+      );
       const editedPost = await response.json();
       dispatch(editPost(editedPost));
     } catch (error) {

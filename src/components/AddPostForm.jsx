@@ -1,15 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { useContext, useState } from "react";
-import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { POSTS_API_URL } from "../contexts/posts.context";
 
 const AddPostForm = () => {
-  const { dispatch } = useContext(PostsContext);
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const { isFetching, refetch: addPost } = useQuery(
-    ["posts"],
-    async () => {
-      const response = await fetch(POSTS_API_URL, {
+  const queryClient = useQueryClient();
+  const { mutate: addPost, isFetching } = useMutation({
+    mutationFn: async () => {
+      await fetch(POSTS_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -20,20 +19,19 @@ const AddPostForm = () => {
           user_id: 1,
         }),
       });
-      const newPost = await response.json();
-      dispatch({ type: "ADD_POST", payload: newPost });
       setTitle("");
       setBody("");
-      return newPost;
     },
-    {
-      onError: (error) => {
-        console.log(error);
-        window.alert("Something went wrong!");
-      },
-      enabled: false,
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      window.alert("Something went wrong!");
+    },
+  });
 
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
@@ -43,9 +41,9 @@ const AddPostForm = () => {
     setBody(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await addPost();
+    addPost();
   };
 
   return (

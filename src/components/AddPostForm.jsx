@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { POSTS_API_URL } from "../contexts/posts.context";
 
 const AddPostForm = () => {
   const [title, setTitle] = useState("");
@@ -8,7 +7,7 @@ const AddPostForm = () => {
   const queryClient = useQueryClient();
   const { mutate: addPost, isLoading } = useMutation({
     mutationFn: async () => {
-      await fetch(POSTS_API_URL, {
+      await fetch(import.meta.env.VITE_POSTS_API_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

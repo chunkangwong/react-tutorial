@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useContext, useState } from "react";
-import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
+import { useState } from "react";
+import usePostsStore from "../store/posts.store";
 
 const EditPostForm = ({ post: { id, title, body } }) => {
-  const { dispatch } = useContext(PostsContext);
+  const setEditedPostId = usePostsStore((state) => state.setEditedPostId);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
   const queryClient = useQueryClient();
   const { mutate: editPost, isLoading } = useMutation({
     mutationFn: async () => {
-      await fetch(POSTS_API_URL + `/${id}`, {
+      await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -21,10 +21,7 @@ const EditPostForm = ({ post: { id, title, body } }) => {
       });
       setEditedTitle("");
       setEditedBody("");
-      dispatch({
-        type: "SET_EDITED_POST_ID",
-        payload: null,
-      });
+      setEditedPostId(null);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

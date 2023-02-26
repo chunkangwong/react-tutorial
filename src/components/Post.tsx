@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deletePost as deletePostService } from "../services/posts.service";
 import usePostsStore, { IPost } from "../store/posts.store";
 
 interface PostProps {
@@ -9,11 +10,7 @@ const Post = ({ post: { id, title, body } }: PostProps) => {
   const setEditedPostId = usePostsStore((state) => state.setEditedPostId);
   const queryClient = useQueryClient();
   const { mutate: deletePost, isLoading } = useMutation({
-    mutationFn: async () => {
-      await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
-        method: "DELETE",
-      });
-    },
+    mutationFn: deletePostService,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["posts"],
@@ -30,7 +27,7 @@ const Post = ({ post: { id, title, body } }: PostProps) => {
   };
 
   const handleDeletePost = () => {
-    deletePost();
+    deletePost(id);
   };
 
   return (

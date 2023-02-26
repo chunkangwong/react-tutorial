@@ -1,26 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { addPost as addPostSerivce } from "../services/posts.service";
 
 const AddPostForm = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const queryClient = useQueryClient();
   const { mutate: addPost, isLoading } = useMutation({
-    mutationFn: async () => {
-      await fetch(import.meta.env.VITE_POSTS_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          body,
-          user_id: 1,
-        }),
-      });
-      setTitle("");
-      setBody("");
-    },
+    mutationFn: addPostSerivce,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["posts"],
@@ -29,6 +16,10 @@ const AddPostForm = () => {
     onError: (error) => {
       console.log(error);
       window.alert("Something went wrong!");
+    },
+    onSettled: () => {
+      setTitle("");
+      setBody("");
     },
   });
 
@@ -42,7 +33,11 @@ const AddPostForm = () => {
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    addPost();
+    addPost({
+      title,
+      body,
+      user_id: 1,
+    });
   };
 
   return (

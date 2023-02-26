@@ -1,12 +1,12 @@
 import {
   deletePost,
-  TPost,
+  IPost,
   setEditedPostId,
 } from "../features/posts/posts.slice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 interface PostProps {
-  post: TPost;
+  post: IPost;
 }
 
 const Post = ({ post: { id, title, body } }: PostProps) => {

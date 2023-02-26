@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { editPost, TPost } from "../features/posts/posts.slice";
+import { editPost, IPost } from "../features/posts/posts.slice";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 interface EditPostFormProps {
-  post: TPost;
+  post: IPost;
 }
 
 const EditPostForm = ({ post: { id, title, body } }: EditPostFormProps) => {

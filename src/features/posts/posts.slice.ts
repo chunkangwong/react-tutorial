@@ -1,6 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  fetchPosts as fetchPostsService,
+  addPost as addPostService,
+  editPost as editPostService,
+  deletePost as deletePostService,
+} from "../../services/posts.service";
 
-export type TPost = {
+export type IPost = {
   id: number;
   title: string;
   body: string;
@@ -8,7 +14,7 @@ export type TPost = {
 };
 
 const initialState = {
-  posts: [] as TPost[],
+  posts: [] as IPost[],
   editedPostId: null as number | null,
   isFetching: false,
   isAdding: false,
@@ -20,7 +26,7 @@ const initialState = {
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
   async (_, { rejectWithValue }) => {
-    const response = await fetch(import.meta.env.VITE_POSTS_API_URL);
+    const response = await fetchPostsService();
     const data = await response.json();
     if (!response.ok) {
       return rejectWithValue(data);
@@ -43,16 +49,10 @@ export const addPost = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    const response = await fetch(import.meta.env.VITE_POSTS_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        body,
-        user_id,
-      }),
+    const response = await addPostService({
+      title,
+      body,
+      user_id,
     });
     const newPost = await response.json();
     if (!response.ok) {
@@ -76,19 +76,11 @@ export const editPost = createAsyncThunk(
     },
     { rejectWithValue }
   ) => {
-    const response = await fetch(
-      import.meta.env.VITE_POSTS_API_URL + `/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: title,
-          body: body,
-        }),
-      }
-    );
+    const response = await editPostService({
+      id,
+      title,
+      body,
+    });
     const editedPost = await response.json();
     if (!response.ok) {
       return rejectWithValue(editedPost);
@@ -100,12 +92,7 @@ export const editPost = createAsyncThunk(
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
   async (id: number, { rejectWithValue }) => {
-    const response = await fetch(
-      import.meta.env.VITE_POSTS_API_URL + `/${id}`,
-      {
-        method: "DELETE",
-      }
-    );
+    const response = await deletePostService(id);
     const data = await response.json();
     if (!response.ok) {
       return rejectWithValue(data);

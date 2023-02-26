@@ -9,13 +9,8 @@ const Post = ({ post: { id, title, body } }) => {
     dispatch(setEditedPostId(id));
   };
 
-  const handleDeletePost = (id) => async () => {
-    try {
-      dispatch(deletePost(id));
-    } catch (error) {
-      console.log(error);
-      window.alert("Something went wrong!");
-    }
+  const handleDeletePost = (id) => () => {
+    dispatch(deletePost(id));
   };
 
   return (

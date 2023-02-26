@@ -26,9 +26,6 @@ const EditPostForm = ({ post: { id, title, body } }) => {
           body: editedBody,
         })
       );
-    } catch (error) {
-      console.log(error);
-      window.alert("Something went wrong!");
     } finally {
       setEditedTitle("");
       setEditedBody("");

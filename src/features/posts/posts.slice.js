@@ -7,6 +7,7 @@ const initialState = {
   isAdding: false,
   isEditing: false,
   isDeleting: false,
+  error: null,
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -79,12 +80,20 @@ const postsSlice = createSlice({
         state.posts = action.payload;
         state.isFetching = false;
       })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.isFetching = false;
+        state.error = action.error;
+      })
       .addCase(addPost.pending, (state) => {
         state.isAdding = true;
       })
       .addCase(addPost.fulfilled, (state, action) => {
         state.posts.push(action.payload);
         state.isAdding = false;
+      })
+      .addCase(addPost.rejected, (state, action) => {
+        state.isAdding = false;
+        state.error = action.error;
       })
       .addCase(editPost.pending, (state) => {
         state.isEditing = true;
@@ -100,6 +109,10 @@ const postsSlice = createSlice({
         });
         state.isEditing = false;
       })
+      .addCase(editPost.rejected, (state, action) => {
+        state.isEditing = false;
+        state.error = action.error;
+      })
       .addCase(deletePost.pending, (state) => {
         state.isDeleting = true;
       })
@@ -107,6 +120,10 @@ const postsSlice = createSlice({
         const deletdPostId = action.payload;
         state.posts = state.posts.filter((post) => post.id !== deletdPostId);
         state.isDeleting = false;
+      })
+      .addCase(deletePost.rejected, (state, action) => {
+        state.isDeleting = false;
+        state.error = action.error;
       });
   },
 });

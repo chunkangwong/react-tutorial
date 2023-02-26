@@ -7,17 +7,21 @@ import Post from "./components/Post";
 import { fetchPosts } from "./features/posts/posts.slice";
 
 function App() {
-  const { posts, editedPostId, isFetching } = useSelector(
+  const { posts, editedPostId, isFetching, error } = useSelector(
     (state) => state.posts
   );
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchPosts()).catch((error) => {
-      console.log(error);
-      window.alert("Something went wrong!");
-    });
+    dispatch(fetchPosts());
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      console.error(error);
+      window.alert("Something went wrong!");
+    }
+  }, [error]);
 
   return (
     <div className="App">

@@ -20,9 +20,6 @@ const AddPostForm = () => {
     e.preventDefault();
     try {
       dispatch(addPost({ title, body, user_id: 1 }));
-    } catch (error) {
-      console.log(error);
-      window.alert("Something went wrong!");
     } finally {
       setTitle("");
       setBody("");

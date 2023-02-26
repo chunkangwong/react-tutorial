@@ -24,6 +24,27 @@ export const addPost = createAsyncThunk(
   }
 );
 
+export const editPost = createAsyncThunk(
+  "posts/editPost",
+  async ({ id, title, body }) => {
+    const response = await fetch(
+      import.meta.env.VITE_POSTS_API_URL + `/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: title,
+          body: body,
+        }),
+      }
+    );
+    const editedPost = await response.json();
+    return editedPost;
+  }
+);
+
 const postsSlice = createSlice({
   name: "posts",
   initialState,
@@ -34,29 +55,29 @@ const postsSlice = createSlice({
     setEditedPostId: (state, action) => {
       state.editedPostId = action.payload;
     },
-    editPost: (state, action) => {
-      const editedPost = action.payload;
-      state.editedPostId = null;
-      state.posts = state.posts.map((post) => {
-        if (post.id === editedPost.id) {
-          return editedPost;
-        }
-        return post;
-      });
-    },
     deletePost: (state, action) => {
       const deletdPostId = action.payload;
       state.posts = state.posts.filter((post) => post.id !== deletdPostId);
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(addPost.fulfilled, (state, action) => {
-      state.posts.push(action.payload);
-    });
+    builder
+      .addCase(addPost.fulfilled, (state, action) => {
+        state.posts.push(action.payload);
+      })
+      .addCase(editPost.fulfilled, (state, action) => {
+        const editedPost = action.payload;
+        state.editedPostId = null;
+        state.posts = state.posts.map((post) => {
+          if (post.id === editedPost.id) {
+            return editedPost;
+          }
+          return post;
+        });
+      });
   },
 });
 
-export const { setPosts, setEditedPostId, editPost, deletePost } =
-  postsSlice.actions;
+export const { setPosts, setEditedPostId, deletePost } = postsSlice.actions;
 
 export default postsSlice.reducer;

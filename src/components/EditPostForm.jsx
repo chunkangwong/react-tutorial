@@ -20,21 +20,13 @@ const EditPostForm = ({ post: { id, title, body } }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(
-        import.meta.env.VITE_POSTS_API_URL + `/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            title: editedTitle,
-            body: editedBody,
-          }),
-        }
+      dispatch(
+        editPost({
+          id,
+          title: editedTitle,
+          body: editedBody,
+        })
       );
-      const editedPost = await response.json();
-      dispatch(editPost(editedPost));
     } catch (error) {
       console.log(error);
       window.alert("Something went wrong!");

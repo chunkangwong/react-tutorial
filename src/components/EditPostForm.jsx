@@ -1,8 +1,10 @@
 import { useContext, useState } from "react";
+import { useDispatch } from "react-redux";
 import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
+import { editPost } from "../features/posts/posts.slice";
 
 const EditPostForm = ({ post: { id, title, body } }) => {
-  const { dispatch } = useContext(PostsContext);
+  const dispatch = useDispatch();
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +32,7 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         }),
       });
       const editedPost = await response.json();
-      dispatch({
-        type: "EDIT_POST",
-        payload: editedPost,
-      });
+      dispatch(editPost(editedPost));
     } catch (error) {
       console.log(error);
       window.alert("Something went wrong!");
@@ -51,12 +50,14 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         placeholder="Title"
         value={editedTitle}
         onChange={handleEditedTitleChange}
+        required
       />
       <input
         type="text"
         placeholder="Body"
         value={editedBody}
         onChange={handleEditedBodyChange}
+        required
       />
       <button type="submit" disabled={isLoading}>
         {isLoading ? "Updating post..." : "Update"}

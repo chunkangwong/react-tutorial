@@ -1,8 +1,10 @@
-import { useContext, useState } from "react";
-import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { POSTS_API_URL } from "../contexts/posts.context";
+import { addPost } from "../features/posts/posts.slice";
 
 const AddPostForm = () => {
-  const { dispatch } = useContext(PostsContext);
+  const dispatch = useDispatch();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +33,7 @@ const AddPostForm = () => {
         }),
       });
       const newPost = await response.json();
-      dispatch({ type: "ADD_POST", payload: newPost });
+      dispatch(addPost(newPost));
     } catch (error) {
       console.log(error);
       window.alert("Something went wrong!");

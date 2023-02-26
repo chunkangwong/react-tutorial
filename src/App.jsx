@@ -1,16 +1,15 @@
-import React, { useEffect, useReducer, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
-import PostsContext, { POSTS_API_URL } from "./contexts/posts.context";
-import postsReducer, { initialState } from "./reducers/posts.reducer";
+import { POSTS_API_URL } from "./contexts/posts.context";
+import { setPosts } from "./features/posts/posts.slice";
 
 function App() {
-  const [{ posts, editedPostId }, dispatch] = useReducer(
-    postsReducer,
-    initialState
-  );
+  const { posts, editedPostId } = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -18,10 +17,7 @@ function App() {
     fetch(POSTS_API_URL)
       .then(async (response) => {
         const data = await response.json();
-        dispatch({
-          type: "SET_POSTS",
-          payload: data,
-        });
+        dispatch(setPosts(data));
       })
       .catch((error) => {
         console.log(error);
@@ -34,24 +30,22 @@ function App() {
 
   return (
     <div className="App">
-      <PostsContext.Provider value={{ dispatch }}>
-        <AddPostForm />
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          posts.map((post) => {
-            return (
-              <React.Fragment key={post.id}>
-                {editedPostId === post.id ? (
-                  <EditPostForm post={post} />
-                ) : (
-                  <Post post={post} />
-                )}
-              </React.Fragment>
-            );
-          })
-        )}
-      </PostsContext.Provider>
+      <AddPostForm />
+      {isLoading ? (
+        <div>Loading...</div>
+      ) : (
+        posts.map((post) => {
+          return (
+            <React.Fragment key={post.id}>
+              {editedPostId === post.id ? (
+                <EditPostForm post={post} />
+              ) : (
+                <Post post={post} />
+              )}
+            </React.Fragment>
+          );
+        })
+      )}
     </div>
   );
 }

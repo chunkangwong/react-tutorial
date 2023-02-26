@@ -1,12 +1,14 @@
-import { useContext, useState } from "react";
-import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { POSTS_API_URL } from "../contexts/posts.context";
+import { deletePost, setEditedPostId } from "../features/posts/posts.slice";
 
 const Post = ({ post: { id, title, body } }) => {
-  const { dispatch } = useContext(PostsContext);
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleEditButtonClick = (id) => () => {
-    dispatch({ type: "SET_EDITED_POST_ID", payload: id });
+    dispatch(setEditedPostId(id));
   };
 
   const handleDeletePost = (id) => async () => {
@@ -15,7 +17,7 @@ const Post = ({ post: { id, title, body } }) => {
       await fetch(POSTS_API_URL + `/${id}`, {
         method: "DELETE",
       });
-      dispatch({ type: "DELETE_POST", payload: id });
+      dispatch(deletePost(id));
     } catch (error) {
       console.log(error);
       window.alert("Something went wrong!");

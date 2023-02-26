@@ -7,7 +7,7 @@ const EditPostForm = ({ post: { id, title, body } }) => {
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
   const queryClient = useQueryClient();
-  const { mutate: editPost, isFetching } = useMutation({
+  const { mutate: editPost, isLoading } = useMutation({
     mutationFn: async () => {
       await fetch(POSTS_API_URL + `/${id}`, {
         method: "PUT",
@@ -64,8 +64,8 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         value={editedBody}
         onChange={handleEditedBodyChange}
       />
-      <button type="submit" disabled={isFetching}>
-        {isFetching ? "Updating post..." : "Update"}
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Updating post..." : "Update"}
       </button>
     </form>
   );

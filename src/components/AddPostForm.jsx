@@ -6,7 +6,7 @@ const AddPostForm = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const queryClient = useQueryClient();
-  const { mutate: addPost, isFetching } = useMutation({
+  const { mutate: addPost, isLoading } = useMutation({
     mutationFn: async () => {
       await fetch(POSTS_API_URL, {
         method: "POST",
@@ -62,8 +62,8 @@ const AddPostForm = () => {
         onChange={handleBodyChange}
         required
       />
-      <button type="submit" disabled={isFetching}>
-        {isFetching ? "Adding post..." : "Add"}
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Adding post..." : "Add"}
       </button>
     </form>
   );

@@ -5,7 +5,7 @@ import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 const Post = ({ post: { id, title, body } }) => {
   const { dispatch } = useContext(PostsContext);
   const queryClient = useQueryClient();
-  const { mutate: deletePost, isFetching } = useMutation({
+  const { mutate: deletePost, isLoading } = useMutation({
     mutationFn: async () => {
       await fetch(POSTS_API_URL + `/${id}`, {
         method: "DELETE",
@@ -34,13 +34,13 @@ const Post = ({ post: { id, title, body } }) => {
     <div className="post">
       <h2>{title}</h2>
       <p>{body}</p>
-      {!isFetching && (
+      {!isLoading && (
         <button type="button" onClick={handleEditButtonClick}>
           Edit
         </button>
       )}
-      <button onClick={handleDeletePost} disabled={isFetching}>
-        {isFetching ? "Deleting post..." : "Delete"}
+      <button onClick={handleDeletePost} disabled={isLoading}>
+        {isLoading ? "Deleting post..." : "Delete"}
       </button>
     </div>
   );

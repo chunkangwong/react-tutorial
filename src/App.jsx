@@ -8,19 +8,12 @@ import PostsContext, { POSTS_API_URL } from "./contexts/posts.context";
 import postsReducer, { initialState } from "./reducers/posts.reducer";
 
 function App() {
-  const [{ posts, editedPostId }, dispatch] = useReducer(
-    postsReducer,
-    initialState
-  );
-  const { isFetching } = useQuery(
+  const [{ editedPostId }, dispatch] = useReducer(postsReducer, initialState);
+  const { isFetching, data: posts } = useQuery(
     ["posts"],
     async () => {
       const response = await fetch(POSTS_API_URL);
       const posts = await response.json();
-      dispatch({
-        type: "SET_POSTS",
-        payload: posts,
-      });
       return posts;
     },
     {

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useContext, useState } from "react";
 import PostsContext, { POSTS_API_URL } from "../contexts/posts.context";
 
@@ -6,10 +6,10 @@ const EditPostForm = ({ post: { id, title, body } }) => {
   const { dispatch } = useContext(PostsContext);
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
-  const { isFetching, refetch: editPost } = useQuery(
-    ["posts"],
-    async () => {
-      const response = await fetch(POSTS_API_URL + `/${id}`, {
+  const queryClient = useQueryClient();
+  const { mutate: editPost, isFetching } = useMutation({
+    mutationFn: async () => {
+      await fetch(POSTS_API_URL + `/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -19,23 +19,23 @@ const EditPostForm = ({ post: { id, title, body } }) => {
           body: editedBody,
         }),
       });
-      const editedPost = await response.json();
-      dispatch({
-        type: "EDIT_POST",
-        payload: editedPost,
-      });
       setEditedTitle("");
       setEditedBody("");
-      return editedPost;
+      dispatch({
+        type: "SET_EDITED_POST_ID",
+        payload: null,
+      });
     },
-    {
-      onError: (error) => {
-        console.log(error);
-        window.alert("Something went wrong!");
-      },
-      enabled: false,
-    }
-  );
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
+    },
+    onError: (error) => {
+      console.log(error);
+      window.alert("Something went wrong!");
+    },
+  });
 
   const handleEditedTitleChange = (e) => {
     setEditedTitle(e.target.value);
@@ -45,9 +45,9 @@ const EditPostForm = ({ post: { id, title, body } }) => {
     setEditedBody(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    await editPost();
+    editPost();
   };
 
   return (

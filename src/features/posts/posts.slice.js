@@ -5,6 +5,12 @@ const initialState = {
   editedPostId: null,
 };
 
+export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
+  const response = await fetch(import.meta.env.VITE_POSTS_API_URL);
+  const data = await response.json();
+  return data;
+});
+
 export const addPost = createAsyncThunk(
   "posts/addPost",
   async ({ title, body, user_id }) => {
@@ -56,19 +62,15 @@ const postsSlice = createSlice({
   name: "posts",
   initialState,
   reducers: {
-    setPosts: (state, action) => {
-      state.posts = action.payload;
-    },
     setEditedPostId: (state, action) => {
       state.editedPostId = action.payload;
-    },
-    deletePost: (state, action) => {
-      const deletdPostId = action.payload;
-      state.posts = state.posts.filter((post) => post.id !== deletdPostId);
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.posts = action.payload;
+      })
       .addCase(addPost.fulfilled, (state, action) => {
         state.posts.push(action.payload);
       })
@@ -89,6 +91,6 @@ const postsSlice = createSlice({
   },
 });
 
-export const { setPosts, setEditedPostId } = postsSlice.actions;
+export const { setEditedPostId } = postsSlice.actions;
 
 export default postsSlice.reducer;

@@ -4,7 +4,7 @@ import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
-import { setPosts } from "./features/posts/posts.slice";
+import { fetchPosts } from "./features/posts/posts.slice";
 
 function App() {
   const { posts, editedPostId } = useSelector((state) => state.posts);
@@ -13,11 +13,7 @@ function App() {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(import.meta.env.VITE_POSTS_API_URL)
-      .then(async (response) => {
-        const data = await response.json();
-        dispatch(setPosts(data));
-      })
+    dispatch(fetchPosts())
       .catch((error) => {
         console.log(error);
         window.alert("Something went wrong!");

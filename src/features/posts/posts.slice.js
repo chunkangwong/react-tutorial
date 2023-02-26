@@ -45,6 +45,13 @@ export const editPost = createAsyncThunk(
   }
 );
 
+export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
+  await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
+    method: "DELETE",
+  });
+  return id;
+});
+
 const postsSlice = createSlice({
   name: "posts",
   initialState,
@@ -74,10 +81,14 @@ const postsSlice = createSlice({
           }
           return post;
         });
+      })
+      .addCase(deletePost.fulfilled, (state, action) => {
+        const deletdPostId = action.payload;
+        state.posts = state.posts.filter((post) => post.id !== deletdPostId);
       });
   },
 });
 
-export const { setPosts, setEditedPostId, deletePost } = postsSlice.actions;
+export const { setPosts, setEditedPostId } = postsSlice.actions;
 
 export default postsSlice.reducer;

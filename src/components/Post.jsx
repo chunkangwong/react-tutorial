@@ -13,9 +13,6 @@ const Post = ({ post: { id, title, body } }) => {
   const handleDeletePost = (id) => async () => {
     setIsLoading(true);
     try {
-      await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
-        method: "DELETE",
-      });
       dispatch(deletePost(id));
     } catch (error) {
       console.log(error);

@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     if (error) {
       console.error(error);
-      window.alert("Something went wrong!");
+      window.alert(error.message || "Something went wrong!");
     }
   }, [error]);
 

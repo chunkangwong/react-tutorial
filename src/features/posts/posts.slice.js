@@ -10,15 +10,21 @@ const initialState = {
   error: null,
 };
 
-export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
-  const response = await fetch(import.meta.env.VITE_POSTS_API_URL);
-  const data = await response.json();
-  return data;
-});
+export const fetchPosts = createAsyncThunk(
+  "posts/fetchPosts",
+  async (_, { rejectWithValue }) => {
+    const response = await fetch(import.meta.env.VITE_POSTS_API_URL);
+    const data = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(data);
+    }
+    return data;
+  }
+);
 
 export const addPost = createAsyncThunk(
   "posts/addPost",
-  async ({ title, body, user_id }) => {
+  async ({ title, body, user_id }, { rejectWithValue }) => {
     const response = await fetch(import.meta.env.VITE_POSTS_API_URL, {
       method: "POST",
       headers: {
@@ -31,13 +37,16 @@ export const addPost = createAsyncThunk(
       }),
     });
     const newPost = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(newPost);
+    }
     return newPost;
   }
 );
 
 export const editPost = createAsyncThunk(
   "posts/editPost",
-  async ({ id, title, body }) => {
+  async ({ id, title, body }, { rejectWithValue }) => {
     const response = await fetch(
       import.meta.env.VITE_POSTS_API_URL + `/${id}`,
       {
@@ -52,16 +61,29 @@ export const editPost = createAsyncThunk(
       }
     );
     const editedPost = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(editedPost);
+    }
     return editedPost;
   }
 );
 
-export const deletePost = createAsyncThunk("posts/deletePost", async (id) => {
-  await fetch(import.meta.env.VITE_POSTS_API_URL + `/${id}`, {
-    method: "DELETE",
-  });
-  return id;
-});
+export const deletePost = createAsyncThunk(
+  "posts/deletePost",
+  async (id, { rejectWithValue }) => {
+    const response = await fetch(
+      import.meta.env.VITE_POSTS_API_URL + `/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+    const data = await response.json();
+    if (!response.ok) {
+      return rejectWithValue(data);
+    }
+    return id;
+  }
+);
 
 const postsSlice = createSlice({
   name: "posts",
@@ -82,7 +104,7 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.isFetching = false;
-        state.error = action.error;
+        state.error = action.payload;
       })
       .addCase(addPost.pending, (state) => {
         state.isAdding = true;
@@ -93,7 +115,7 @@ const postsSlice = createSlice({
       })
       .addCase(addPost.rejected, (state, action) => {
         state.isAdding = false;
-        state.error = action.error;
+        state.error = action.payload;
       })
       .addCase(editPost.pending, (state) => {
         state.isEditing = true;
@@ -111,7 +133,7 @@ const postsSlice = createSlice({
       })
       .addCase(editPost.rejected, (state, action) => {
         state.isEditing = false;
-        state.error = action.error;
+        state.error = action.payload;
       })
       .addCase(deletePost.pending, (state) => {
         state.isDeleting = true;
@@ -123,7 +145,7 @@ const postsSlice = createSlice({
       })
       .addCase(deletePost.rejected, (state, action) => {
         state.isDeleting = false;
-        state.error = action.error;
+        state.error = action.payload;
       });
   },
 });

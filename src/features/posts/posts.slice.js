@@ -3,6 +3,10 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   posts: [],
   editedPostId: null,
+  isFetching: false,
+  isAdding: false,
+  isEditing: false,
+  isDeleting: false,
 };
 
 export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
@@ -68,11 +72,22 @@ const postsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchPosts.pending, (state) => {
+        state.isFetching = true;
+      })
       .addCase(fetchPosts.fulfilled, (state, action) => {
         state.posts = action.payload;
+        state.isFetching = false;
+      })
+      .addCase(addPost.pending, (state) => {
+        state.isAdding = true;
       })
       .addCase(addPost.fulfilled, (state, action) => {
         state.posts.push(action.payload);
+        state.isAdding = false;
+      })
+      .addCase(editPost.pending, (state) => {
+        state.isEditing = true;
       })
       .addCase(editPost.fulfilled, (state, action) => {
         const editedPost = action.payload;
@@ -83,10 +98,15 @@ const postsSlice = createSlice({
           }
           return post;
         });
+        state.isEditing = false;
+      })
+      .addCase(deletePost.pending, (state) => {
+        state.isDeleting = true;
       })
       .addCase(deletePost.fulfilled, (state, action) => {
         const deletdPostId = action.payload;
         state.posts = state.posts.filter((post) => post.id !== deletdPostId);
+        state.isDeleting = false;
       });
   },
 });

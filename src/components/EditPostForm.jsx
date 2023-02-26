@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { editPost } from "../features/posts/posts.slice";
 
 const EditPostForm = ({ post: { id, title, body } }) => {
   const dispatch = useDispatch();
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
-  const [isLoading, setIsLoading] = useState(false);
+  const isEditing = useSelector((state) => state.posts.isEditing);
 
   const handleEditedTitleChange = (e) => {
     setEditedTitle(e.target.value);
@@ -18,7 +18,6 @@ const EditPostForm = ({ post: { id, title, body } }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
     try {
       dispatch(
         editPost({
@@ -31,7 +30,6 @@ const EditPostForm = ({ post: { id, title, body } }) => {
       console.log(error);
       window.alert("Something went wrong!");
     } finally {
-      setIsLoading(false);
       setEditedTitle("");
       setEditedBody("");
     }
@@ -53,8 +51,8 @@ const EditPostForm = ({ post: { id, title, body } }) => {
         onChange={handleEditedBodyChange}
         required
       />
-      <button type="submit" disabled={isLoading}>
-        {isLoading ? "Updating post..." : "Update"}
+      <button type="submit" disabled={isEditing}>
+        {isEditing ? "Updating post..." : "Update"}
       </button>
     </form>
   );

@@ -1,13 +1,20 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
+export type TPost = {
+  id: number;
+  title: string;
+  body: string;
+  user_id: number;
+};
+
 const initialState = {
-  posts: [],
-  editedPostId: null,
+  posts: [] as TPost[],
+  editedPostId: null as number | null,
   isFetching: false,
   isAdding: false,
   isEditing: false,
   isDeleting: false,
-  error: null,
+  error: null as Error | null,
 };
 
 export const fetchPosts = createAsyncThunk(
@@ -24,7 +31,18 @@ export const fetchPosts = createAsyncThunk(
 
 export const addPost = createAsyncThunk(
   "posts/addPost",
-  async ({ title, body, user_id }, { rejectWithValue }) => {
+  async (
+    {
+      title,
+      body,
+      user_id,
+    }: {
+      title: string;
+      body: string;
+      user_id: number;
+    },
+    { rejectWithValue }
+  ) => {
     const response = await fetch(import.meta.env.VITE_POSTS_API_URL, {
       method: "POST",
       headers: {
@@ -46,7 +64,18 @@ export const addPost = createAsyncThunk(
 
 export const editPost = createAsyncThunk(
   "posts/editPost",
-  async ({ id, title, body }, { rejectWithValue }) => {
+  async (
+    {
+      id,
+      title,
+      body,
+    }: {
+      id: number;
+      title: string;
+      body: string;
+    },
+    { rejectWithValue }
+  ) => {
     const response = await fetch(
       import.meta.env.VITE_POSTS_API_URL + `/${id}`,
       {
@@ -70,7 +99,7 @@ export const editPost = createAsyncThunk(
 
 export const deletePost = createAsyncThunk(
   "posts/deletePost",
-  async (id, { rejectWithValue }) => {
+  async (id: number, { rejectWithValue }) => {
     const response = await fetch(
       import.meta.env.VITE_POSTS_API_URL + `/${id}`,
       {
@@ -104,7 +133,7 @@ const postsSlice = createSlice({
       })
       .addCase(fetchPosts.rejected, (state, action) => {
         state.isFetching = false;
-        state.error = action.payload;
+        state.error = action.payload as Error;
       })
       .addCase(addPost.pending, (state) => {
         state.isAdding = true;
@@ -115,7 +144,7 @@ const postsSlice = createSlice({
       })
       .addCase(addPost.rejected, (state, action) => {
         state.isAdding = false;
-        state.error = action.payload;
+        state.error = action.payload as Error;
       })
       .addCase(editPost.pending, (state) => {
         state.isEditing = true;
@@ -133,7 +162,7 @@ const postsSlice = createSlice({
       })
       .addCase(editPost.rejected, (state, action) => {
         state.isEditing = false;
-        state.error = action.payload;
+        state.error = action.payload as Error;
       })
       .addCase(deletePost.pending, (state) => {
         state.isDeleting = true;
@@ -145,7 +174,7 @@ const postsSlice = createSlice({
       })
       .addCase(deletePost.rejected, (state, action) => {
         state.isDeleting = false;
-        state.error = action.payload;
+        state.error = action.payload as Error;
       });
   },
 });

@@ -1,22 +1,30 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { editPost } from "../features/posts/posts.slice";
+import { editPost, TPost } from "../features/posts/posts.slice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
-const EditPostForm = ({ post: { id, title, body } }) => {
-  const dispatch = useDispatch();
+interface EditPostFormProps {
+  post: TPost;
+}
+
+const EditPostForm = ({ post: { id, title, body } }: EditPostFormProps) => {
+  const dispatch = useAppDispatch();
   const [editedTitle, setEditedTitle] = useState(title);
   const [editedBody, setEditedBody] = useState(body);
-  const isEditing = useSelector((state) => state.posts.isEditing);
+  const isEditing = useAppSelector((state) => state.posts.isEditing);
 
-  const handleEditedTitleChange = (e) => {
+  const handleEditedTitleChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setEditedTitle(e.target.value);
   };
 
-  const handleEditedBodyChange = (e) => {
+  const handleEditedBodyChange: React.ChangeEventHandler<HTMLInputElement> = (
+    e
+  ) => {
     setEditedBody(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     try {
       dispatch(

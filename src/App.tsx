@@ -1,16 +1,16 @@
 import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import "./App.css";
 import AddPostForm from "./components/AddPostForm";
 import EditPostForm from "./components/EditPostForm";
 import Post from "./components/Post";
 import { fetchPosts } from "./features/posts/posts.slice";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
 
 function App() {
-  const { posts, editedPostId, isFetching, error } = useSelector(
+  const { posts, editedPostId, isFetching, error } = useAppSelector(
     (state) => state.posts
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchPosts());

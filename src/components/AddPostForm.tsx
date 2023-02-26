@@ -1,22 +1,22 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { addPost } from "../features/posts/posts.slice";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
 
 const AddPostForm = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const isAdding = useSelector((state) => state.posts.isAdding);
+  const isAdding = useAppSelector((state) => state.posts.isAdding);
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setTitle(e.target.value);
   };
 
-  const handleBodyChange = (e) => {
+  const handleBodyChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setBody(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     try {
       dispatch(addPost({ title, body, user_id: 1 }));

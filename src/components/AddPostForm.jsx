@@ -16,23 +16,11 @@ const AddPostForm = () => {
     setBody(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch(import.meta.env.VITE_POSTS_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          body,
-          user_id: 1,
-        }),
-      });
-      const newPost = await response.json();
-      dispatch(addPost(newPost));
+      dispatch(addPost({ title, body, user_id: 1 }));
     } catch (error) {
       console.log(error);
       window.alert("Something went wrong!");
